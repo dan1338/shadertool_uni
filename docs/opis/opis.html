@@ -1,0 +1,21 @@
+<h1>Przetwarzanie wideo przy uzyciu shaderow</h1>
+<h2>Cel programu</h2>
+<p>Program pozwala na modyfikacje klatek pliku wideo
+przez program/y napisane w jezyku GLSL.</p>
+<h2>Opis programu</h2>
+<p>Program przyjmuje na wejscie sciezke do skryptu, w ktorym mozna zdefiniowac</p>
+<ul>
+<li>plik/i wejsciowe</li>
+<li>plik/i wyjsciowe</li>
+<li>shadery</li>
+<li>instrukcje do wykonania</li>
+</ul>
+<p>Nastepnie laduje i przygotowuje wyzej wymienione zasoby.</p>
+<p>Pliki wejsciowe opakowywane sa jako zrodlo danych,
+ktore pozwala na pozyskanie nastepnej klatki o okreslonym formacie.
+Implementacja wykorzystuje biblioteke ffmpeg do demuxowania i dekodowania wideo</p>
+<p>Analogicze wyglada sytuacja plikow wyjsciowych.</p>
+<p>Tworzony jest kontext OpenGL a nastepnie ladowane i kompilowane wszystkie programy GLSL</p>
+<p>Nastepnie interpreter wykonuje sekcje zawierajaca operacje na plikach wejscia/plikach wyjscia i shaderach.</p>
+<p>Wyniki tych operacji, jezeli tak stanowi skrypt
+moga byc wypisane do pliku wyjscia jako zmodyfikowane klatki.</p>
