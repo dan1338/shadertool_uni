@@ -111,10 +111,17 @@ auto FrameSink::operator<<(const video::Frame &frame) -> bool
 	do 
 	{
 		memcpy(inframe->data[0], frame, frame.size());
+
+		// We perform a vertical flip due to opengl read inverting y coordinates
+		auto *tmp = inframe->data[0];
 		inframe->linesize[0] = frame.width() * 3;
+		inframe->data[0] += inframe->linesize[0] * (frame.height() - 1);
+		inframe->linesize[0] *= -1;
 
 		ret = sws_scale(sws_ctx, inframe->data, inframe->linesize, 0, inframe->height,
 				outframe->data, outframe->linesize);
+
+		inframe->data[0] = tmp;
 
 		outframe->pts = encoder_ctx->frame_number;
 
