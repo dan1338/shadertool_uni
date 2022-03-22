@@ -76,6 +76,14 @@ static inline std::string next_word(const char *p, char delim)
 	return std::string(p).substr(0, s - p);
 }
 
+static inline const char *skip_whitespace(const char *p)
+{
+	while (*p == ' ' || *p == '\t')
+		++p;
+
+	return p;
+}
+
 static inline std::vector<std::string> parse_args(const char *p, char delim)
 {
 	std::vector<std::string> args;
@@ -88,10 +96,7 @@ static inline std::vector<std::string> parse_args(const char *p, char delim)
 			break;
 
 		args.push_back(arg);
-		p += arg.size() + 1;
-
-		while (*p == ' ')
-			++p;
+		p = skip_whitespace(p + arg.size() + 1);
 	}
 
 	return args;
@@ -105,7 +110,7 @@ auto Parser::parse_directive(const std::string &line) -> std::unique_ptr<Directi
 		++p;
 
 	const auto name = next_word(p, ' ');
-	const auto args = parse_args(p + name.size() + 1, ' ');
+	const auto args = parse_args(skip_whitespace(p + name.size() + 1), ' ');
 
 	if (name == "shader")
 		return std::make_unique<ShaderDirective>(args, cargs);
@@ -123,7 +128,7 @@ auto Parser::parse_instruction(const std::string &line) -> std::unique_ptr<Instr
 {
 	const char *p = line.c_str();
 	const auto name = next_word(p, ' ');
-	const auto args = parse_args(p + name.size() + 1, ',');
+	const auto args = parse_args(skip_whitespace(p + name.size() + 1), ',');
 
 	if (name == "pull")
 		return std::make_unique<PullInstruction>(args);
