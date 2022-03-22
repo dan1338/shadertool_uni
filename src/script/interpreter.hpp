@@ -45,7 +45,7 @@ namespace script
 		friend class Instruction;
 		friend class Directive;
 		Interpreter(const script::File &file, cmdline::Args &args);
-		auto exec() -> void;
+		auto exec() -> bool;
 		auto get_ctx() -> ExecutionContext& { return ctx; }
 	private:
 		ExecutionContext ctx;

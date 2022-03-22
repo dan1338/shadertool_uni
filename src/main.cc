@@ -15,11 +15,11 @@ int main(int argc, char **argv)
 		script::File file(args.first());
 		script::Interpreter interp(file, args);
 
-		do
+		while (1)
 		{
-			interp.exec();
+			if (!interp.exec())
+				break;
 		}
-		while (interp.get_ctx().flags.rdok);
 	}
 	catch (std::invalid_argument &e)
 	{

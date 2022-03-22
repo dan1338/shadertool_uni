@@ -15,12 +15,10 @@ Interpreter::Interpreter(const script::File &file, cmdline::Args &args):
 		directive->apply(ctx);
 }
 
-auto Interpreter::exec() -> void
+auto Interpreter::exec() -> bool
 {
 	if (ctx.pc >= parser.get_instructions().size())
-	{
-		throw std::runtime_error("Program counter out of bounds");
-	}
+		return false;
 
 	const auto &insn = parser.get_instructions()[ctx.pc];
 
@@ -34,6 +32,8 @@ auto Interpreter::exec() -> void
 		std::cout << "*** interpreter error @ pc=" << std::to_string(ctx.pc) << " ***\n";
 		throw e;
 	}
+
+	return true;
 }
 
 }
