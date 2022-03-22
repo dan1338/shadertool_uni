@@ -36,8 +36,14 @@ auto PullInstruction::exec(ExecutionContext &ctx) -> void
 	if (source_pair == ctx.sources.end())
 		throw std::runtime_error("Invalid frame source");
 
+	auto &reg = ctx.regs[regid];
 	auto &source = source_pair->second;
-	ctx.regs[regid] = std::make_unique<video::Frame>(source.get_frame_spec());
+
+	// Create new frame only if it doesn't already exist or has wrong size
+	if (!reg->try_cast<video::Frame>() || reg->cast<video::Frame>()->get_spec() != source.get_frame_spec())
+	{
+		ctx.regs[regid] = std::make_unique<video::Frame>(source.get_frame_spec());
+	}
 
 	auto &frame = *ctx.regs[regid]->cast<video::Frame>();
 	ctx.flags.rdok = source >> frame;

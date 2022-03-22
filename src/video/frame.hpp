@@ -11,6 +11,9 @@ namespace video
 		size_t width, height;
 		unsigned nchannels;
 		unsigned depth;
+
+		auto operator==(const FrameSpec &rhs) const { return (width == rhs.width && height == rhs.height); }
+		auto operator!=(const FrameSpec &rhs) const { return !((*this) == rhs); }
 	};
 
 	class Frame : public script::Register
