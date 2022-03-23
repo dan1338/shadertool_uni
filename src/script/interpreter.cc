@@ -26,26 +26,6 @@ auto Interpreter::exec() -> bool
 	{
 		insn->exec(ctx);
 		ctx.pc += 1;
-
-		printf("pc=%zu\n", ctx.pc);
-
-		for (size_t i = 0; i < num_registers; i++)
-		{
-			auto &reg = ctx.regs[i];
-
-			if (reg)
-			{
-				switch (reg->type)
-				{
-				case Register::INT:
-					printf("r%zu = %u\n", i, static_cast<int>(*reg));
-					break;
-				case Register::FLOAT:
-					printf("r%zu = %.3f\n", i, static_cast<float>(*reg));
-					break;
-				}
-			}
-		}
 	}
 	catch (std::runtime_error &e)
 	{

@@ -58,17 +58,6 @@ Shader::Shader(const Shader::Type type, const std::string &name, const std::stri
 		glGetShaderInfoLog(id, sizeof glsl_err, 0, glsl_err);
 		throw std::runtime_error(glsl_err);
 	}
-
-	if (0) // DEBUG
-	{
-		std::cout << "shader (";
-		switch (type) {
-			case VERTEX: std::cout << "vertex"; break;
-			case FRAGMENT: std::cout << "fragment"; break;
-		}
-		std::cout << ")\n";
-		std::cout << src;
-	}
 }
 
 Shader::~Shader()
