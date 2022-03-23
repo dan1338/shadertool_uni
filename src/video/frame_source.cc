@@ -109,13 +109,16 @@ auto FrameSource::operator>>(video::Frame &frame) -> bool
 
 	do
 	{
-		ret = av_read_frame(format_ctx, pkt);
+		while (1)
+		{
+			ret = av_read_frame(format_ctx, pkt);
 
-		if (format_ctx->streams[pkt->stream_index] != stream)
-			continue;
+			if (ret < 0)
+				return false;
 
-		if (ret < 0)
-			return false;
+			if (format_ctx->streams[pkt->stream_index] == stream)
+				break;
+		}
 		
 		ret = avcodec_send_packet(decoder_ctx, pkt);
 

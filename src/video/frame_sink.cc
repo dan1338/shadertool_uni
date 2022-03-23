@@ -39,8 +39,7 @@ FrameSink::FrameSink(const std::string &path, const FrameSource &source):
 
 	stream->avg_frame_rate = stream->r_frame_rate = { fps_num, fps_den };
 	stream->time_base = { 1, 1000 };
-	// Reduce time base by half as a "temporary" fix for h264 pts scaling
-	encoder_ctx->time_base = { fps_den, 3*fps_num };
+	encoder_ctx->time_base = { fps_den, fps_num };
 	encoder_ctx->bit_rate = source.decoder_ctx->bit_rate;
 	encoder_ctx->gop_size = source.decoder_ctx->gop_size;
 	
