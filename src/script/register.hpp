@@ -29,10 +29,18 @@ namespace script
 
 		union
 		{
-			signed long i;
-			unsigned long u;
-			double d;
+			int i;
+			float f;
 		} value;
+
+		enum
+		{
+			INT,
+			FLOAT
+		} type;
+
+		operator int&() { type = INT; return value.i; }
+		operator float&() { type = FLOAT; return value.f; }
 	};
 }
 

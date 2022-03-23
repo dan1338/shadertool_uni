@@ -35,7 +35,7 @@ int ShaderProgram::operator[](const std::string &name) const
 	const int loc = glGetUniformLocation(id, name.c_str());
 
 	if (loc == -1)
-		throw std::runtime_error("Unable to find shader uniform");
+		throw std::runtime_error(std::string("Unable to find shader uniform ") + name);
 
 	return loc;
 }

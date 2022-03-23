@@ -112,7 +112,21 @@ auto ApplyInstruction::exec(ExecutionContext &ctx) -> void
 		auto &reg = ctx.regs[regid];
 
 		if (reg->try_cast<video::Frame>())
+		{
 			dev.load_texture(name, *reg->cast<video::Frame>());
+		}
+		else 
+		{
+			switch (reg->type)
+			{
+			case Register::FLOAT:
+				shader.set(shader[name], static_cast<float>(*reg));
+				break;
+			case Register::INT:
+				shader.set(shader[name], static_cast<int>(*reg));
+				break;
+			}
+		}
 	}
 
 	dev.clear();
@@ -189,6 +203,138 @@ auto JmpIfInstruction::exec(ExecutionContext &ctx) -> void
 	}
 }
 
+static inline bool is_float(const std::string &s)
+{
+	return (s.find(".") != std::string::npos || s.find("e") != std::string::npos);
+}
+
+static inline std::pair<std::string, std::string> split_object(const std::string &s)
+{
+	const size_t dot = s.find(".");
+
+	if (dot == std::string::npos || dot == 0)
+		throw std::invalid_argument("Invalid property");
+
+	return std::make_pair(s.substr(0, dot), s.substr(dot + 1, s.size()));
+}
+
+static inline std::function<void(const size_t, ExecutionContext&)> get_copy_func(const std::string &s)
+{
+	const auto copy_float = [](float &dst, const float src){ dst = src; };
+	const auto copy_int = [](int &dst, const int src){ dst = src; };
+
+	if (isdigit(s[0]))
+	{
+		if (is_float(s))
+		{
+			const float f = std::stof(s);
+			return [=](const size_t dstid, ExecutionContext &ctx){
+				ctx.regs[dstid] = std::make_unique<Register>();
+				copy_float(*ctx.regs[dstid], f);
+			};
+		}
+		else
+		{
+			const int i = std::stoi(s);
+			return [=](const size_t dstid, ExecutionContext &ctx){
+				ctx.regs[dstid] = std::make_unique<Register>();
+				copy_int(*ctx.regs[dstid], i);
+			};
+		}
+	}
+
+	if (s[0] == 'r')
+	{
+		const size_t srcid = get_regid(s);
+
+		if (srcid < script::num_registers)
+		{
+			return [=](const size_t dstid, ExecutionContext &ctx){
+				auto &src = ctx.regs[srcid];
+
+				if (src->try_cast<video::Frame>())
+				{
+					ctx.regs[dstid] = std::make_unique<video::Frame>(*src->cast<video::Frame>());
+				}
+				else
+				{
+					ctx.regs[dstid] = std::make_unique<Register>();
+
+					switch (src->type)
+					{
+					case Register::FLOAT:
+						copy_float(*ctx.regs[dstid], *src);
+						break;
+					case Register::INT:
+						copy_int(*ctx.regs[dstid], *src);
+						break;
+					}
+				}
+			};
+		}
+	}
+
+	const auto name_pair = split_object(s);
+	const auto object = name_pair.first;
+	const auto property = name_pair.second;
+
+	return [=](const size_t dstid, ExecutionContext &ctx){
+		const auto source_pair = ctx.sources.find(object);
+
+		if (source_pair != ctx.sources.end())
+		{
+			auto &source = source_pair->second;
+
+			if (property == "timestep")
+			{
+				ctx.regs[dstid] = std::make_unique<Register>();
+				copy_float(*ctx.regs[dstid], source.get_time_step());
+				return;
+			}
+
+			throw std::invalid_argument("Invalid source property");
+		}
+
+		throw std::invalid_argument("Invalid object");
+	};
+}
+
+MovInstruction::MovInstruction(const std::vector<std::string> &args):
+	Instruction("mov", 2, args),
+	dstid(get_regid(args[0])),
+	do_copy(get_copy_func(args[1]))
+{
+}
+
+auto MovInstruction::exec(ExecutionContext &ctx) -> void
+{
+	do_copy(dstid, ctx);
+}
+
+AddInstruction::AddInstruction(const std::vector<std::string> &args):
+	Instruction("add", 2, args),
+	dstid(get_regid(args[0])),
+	srcid(get_regid(args[1]))
+{
+}
+
+auto AddInstruction::exec(ExecutionContext &ctx) -> void
+{
+	const auto add_float = [](float &dst, const float src){ dst += src; };
+	const auto add_int = [](int &dst, const int src){ dst += src; };
+	auto &dst = ctx.regs[dstid];
+	auto &src = ctx.regs[srcid];
+
+	switch (src->type)
+	{
+	case Register::FLOAT:
+		add_float(*dst, *src);
+		break;
+	case Register::INT:
+		add_int(*dst, *src);
+		break;
+	}
+}
 
 }
 

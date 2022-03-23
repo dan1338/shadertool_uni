@@ -24,6 +24,9 @@ namespace video
 		auto get_frame_spec() const -> FrameSpec {
 			return { (size_t)decoder_ctx->width, (size_t)decoder_ctx->height, 3, 1 };
 		}
+		auto get_time_step() -> float {
+			return stream->r_frame_rate.den / (float)stream->r_frame_rate.num;
+		}
 	private:
 		AVFormatContext *format_ctx;
 		AVCodecContext *decoder_ctx;

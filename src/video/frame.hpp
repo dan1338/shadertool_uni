@@ -22,6 +22,7 @@ namespace video
 		friend class FrameSource;
 
 		Frame(const FrameSpec &spec, const bool extern_storage = false);
+		Frame(const Frame &other);
 		~Frame();
 		auto size() const -> size_t { return spec.width * spec.height * spec.nchannels * spec.depth; }
 		auto width() const -> size_t { return spec.width; }

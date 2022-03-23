@@ -96,5 +96,33 @@ namespace script
 		const bool neg;
 		const std::function<bool(const ExecutionContext&)> eval;
 	};
+
+	// Copy <src> value into r<dstid> register
+	// usage: mov r<dstid>, <src>
+	//
+	// <src> can be an other register, immediate value or object property
+	// immediate values fall back to double if they use float notation, otherwise int
+	// object properties can be accesed like obj.property
+	class MovInstruction : public Instruction
+	{
+	public:
+		MovInstruction(const std::vector<std::string> &args);
+		auto exec(ExecutionContext &ctx) -> void override;
+	private:
+		const size_t dstid;
+		const std::function<void(const size_t, ExecutionContext&)> do_copy;
+	};
+
+	// Add value of r<srcid> to r<dstid>
+	// usage: add r<dstid>, r<srcid>
+	class AddInstruction : public Instruction
+	{
+	public:
+		AddInstruction(const std::vector<std::string> &args);
+		auto exec(ExecutionContext &ctx) -> void override;
+	private:
+		const size_t dstid;
+		const size_t srcid;
+	};
 }
 

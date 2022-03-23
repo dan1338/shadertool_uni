@@ -140,6 +140,10 @@ auto Parser::parse_instruction(const std::string &line) -> std::unique_ptr<Instr
 		return std::make_unique<JmpInstruction>(args);
 	else if (name == "jmpif")
 		return std::make_unique<JmpIfInstruction>(args);
+	else if (name == "mov")
+		return std::make_unique<MovInstruction>(args);
+	else if (name == "add")
+		return std::make_unique<AddInstruction>(args);
 
 	throw std::invalid_argument("Invalid instruction");
 }
