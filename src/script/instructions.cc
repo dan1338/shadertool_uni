@@ -46,7 +46,9 @@ auto PullInstruction::exec(ExecutionContext &ctx) -> void
 	}
 
 	auto &frame = *ctx.regs[regid]->cast<video::Frame>();
-	ctx.flags.rdok = source >> frame;
+	bool ok = source >> frame;
+	ctx.flags.rdok = ok;
+	ctx.flags.rdany |= ok;
 }
 
 PushInstruction::PushInstruction(const std::vector<std::string> &args):
@@ -66,6 +68,7 @@ auto PushInstruction::exec(ExecutionContext &ctx) -> void
 	auto &sink = sink_pair->second;
 	auto &frame = *ctx.regs[regid]->cast<video::Frame>();
 	ctx.flags.wrok = sink << frame;
+	ctx.flags.rdany = 0;
 }
 
 static inline std::pair<std::string, std::string> split_uniform(const std::string &s)
@@ -157,6 +160,8 @@ static inline std::function<bool(const ExecutionContext&)> get_eval_func(const s
 
 	if (expr == "rdok")
 		return [](const ExecutionContext &ctx){ return ctx.flags.rdok; };
+	else if (expr == "rdany")
+		return [](const ExecutionContext &ctx){ return ctx.flags.rdany; };
 	else if (expr == "wrok")
 		return [](const ExecutionContext &ctx){ return ctx.flags.wrok; };
 	else if (expr == "zero")

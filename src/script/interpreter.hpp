@@ -29,6 +29,7 @@ namespace script
 		std::array<std::unique_ptr<Register>, num_registers> regs;
 		struct {
 			int rdok:1;
+			int rdany:1;
 			int wrok:1;
 			int zero:1;
 		} flags;

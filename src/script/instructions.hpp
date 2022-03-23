@@ -84,7 +84,7 @@ namespace script
 	// Jump <offset> instructions relative to pc if condition is true
 	// usage: jmpif <offset>, [!]<cond>
 	//
-	// <cond> can be any of ctx.flags [rdok, wrok, zero]
+	// <cond> can be any of ctx.flags [rdok, rdany, wrok, zero]
 	// the optional ! prefix negates the <cond> expression
 	class JmpIfInstruction : public Instruction
 	{
