@@ -1,0 +1,14 @@
+.source in @OPT(i)
+.sink out @OPT(o)
+.shader waves waves.glsl
+.exec
+
+mov 	r2, in.timestep
+mov 	r1, 0.0
+pull 	r0, in
+jmpif 	100, !rdok
+apply 	waves, frame=r0, time=r1
+add 	r1, r2
+push 	out, r0
+jmp 	-5
+

@@ -1,11 +1,11 @@
 .source in @OPT(i)
 .sink out @OPT(o)
-.shader copy copy.glsl
+.shader blur blur.glsl
 .exec
 
 pull 	r0, in
 jmpif 	100, !rdok
-apply 	copy, frame=r0
+apply 	blur, frame=r0
 push 	out, r0
 jmp 	-4
 

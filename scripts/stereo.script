@@ -1,0 +1,13 @@
+.source ain @OPT(a)
+.source bin @OPT(b)
+.sink out @OPT(o)
+.shader stereo stereo.glsl
+.exec
+
+pull 	r1, ain
+pull 	r2, bin
+jmpif 	100, !rdany
+apply 	stereo, aframe=r1, bframe=r2
+push 	out, r0
+jmp 	-5
+
