@@ -223,7 +223,7 @@ static inline std::function<void(const size_t, ExecutionContext&)> get_copy_func
 	const auto copy_float = [](float &dst, const float src){ dst = src; };
 	const auto copy_int = [](int &dst, const int src){ dst = src; };
 
-	if (isdigit(s[0]))
+	if (isdigit(s[0]) || s[0] == '-' || s[0] == '+')
 	{
 		if (is_float(s))
 		{
@@ -239,6 +239,7 @@ static inline std::function<void(const size_t, ExecutionContext&)> get_copy_func
 			return [=](const size_t dstid, ExecutionContext &ctx){
 				ctx.regs[dstid] = std::make_unique<Register>();
 				copy_int(*ctx.regs[dstid], i);
+				ctx.flags.zero = (static_cast<int>(*ctx.regs[dstid]) == 0);
 			};
 		}
 	}
@@ -267,6 +268,7 @@ static inline std::function<void(const size_t, ExecutionContext&)> get_copy_func
 						break;
 					case Register::INT:
 						copy_int(*ctx.regs[dstid], *src);
+						ctx.flags.zero = (static_cast<int>(*ctx.regs[dstid]) == 0);
 						break;
 					}
 				}
@@ -332,6 +334,7 @@ auto AddInstruction::exec(ExecutionContext &ctx) -> void
 		break;
 	case Register::INT:
 		add_int(*dst, *src);
+		ctx.flags.zero = (static_cast<int>(*dst) == 0);
 		break;
 	}
 }
