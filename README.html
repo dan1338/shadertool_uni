@@ -1,0 +1,44 @@
+<h1>shadertool</h1>
+<h2>usage</h2>
+<p>./shadertool &lt;script/path> [options...]</p>
+<h2>script layout</h2>
+<pre><code>.dir1 par1 par2
+.dir2 par1 
+.dir3 par1
+...
+.exec
+ins1    a, b
+ins2    a
+ins3    a, b
+...
+</code></pre>
+<h2>directives</h2>
+<p>.source name [path|@OPT] - defines frame source</p>
+<p>.sink name [path|@OPT] - defines frame sink</p>
+<p>.shader name [path|@OPT] - defines frame sink</p>
+<p>.exec - begin executable section</p>
+<h2>instructions</h2>
+<p>pull    reg, source - load frame from source into reg</p>
+<p>push    sink, reg - store frame into sink from reg</p>
+<p>apply   shader, [uniform=reg]... - run shader with uniforms and return frame to r0</p>
+<p>jmp     offset - change pc by relative offset</p>
+<p>jmpif   offset, [!]cond - change pc by relative offset if cond is true</p>
+<p>mov     dreg, [sreg|imm|obj.param] - copy value into dreg</p>
+<p>add     dreg, sreg - add value of sreg to dreg, sets zero flag if dreg is 0</p>
+<h2>source</h2>
+<p>main.cc             - main logic, loads script file and runs interpreter</p>
+<p>cmdline/args        - cmdline argument parser</p>
+<p>video/frame         - structure for holding pixel data</p>
+<p>video/frame_source  - abstraction of media container, provides frames</p>
+<p>video/frame_sink    - abstraction of media container, receives frames</p>
+<p>fs/remote_path      - wrapper for storing path data, supports runtime resolution of references to cmdline arguments</p>
+<p>script/file         - abstraction of file contents</p>
+<p>script/parser       - parses script files</p>
+<p>script/directives   - implementation of directives</p>
+<p>script/instructions - implementation of instructions</p>
+<p>script/interpreter  - interpreter of script files, applies directives and executes instructions</p>
+<p>script/register     - base class representing default storage type of interpreter</p>
+<p>graphics/render_device  - abstraction of rendering device, interfaces with opengl</p>
+<p>graphics/render_target  - abstraction of underlying opengl structures for receiving frames</p>
+<p>graphics/shader         - abstraction of shader loading/uploading</p>
+<p>graphics/shader_program - abstraction of loaded shader program</p>

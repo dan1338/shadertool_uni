@@ -7,9 +7,9 @@
 mov 	r1, 100
 mov 	r2, -1
 pull 	r0, in
-apply	dot
-apply 	sim, frame=r0
 push 	out, r0
+apply	dot, frame=r0
+apply 	sim, frame=r0
 add 	r1, r2
-jmpif	-3, !zero
+jmpif	-4, !zero
 
