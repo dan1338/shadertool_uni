@@ -17,7 +17,7 @@ namespace graphics
 		RenderDevice(const size_t default_width = 800, const size_t default_height = 600);
 		~RenderDevice();
 		auto use_shader(const ShaderProgram &shader) -> void;
-		auto set_target(const RenderTarget &target) -> void;
+		auto set_target(RenderTarget &target) -> void;
 		auto reset_target() -> void;
 		auto get_frame_spec() const -> video::FrameSpec;
 		auto load_texture(const std::string &name, const video::Frame &frame) -> void;
@@ -30,7 +30,7 @@ namespace graphics
 		unsigned vao;
 		unsigned vbo;
 		const ShaderProgram *current_shader;
-		const RenderTarget *current_target;
+		RenderTarget *current_target;
 		GLFWwindow *window;
 
 		// texmap associates name to texture unit

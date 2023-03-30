@@ -20,6 +20,8 @@ namespace graphics
 			glBindRenderbuffer(GL_RENDERBUFFER, rbo);
 			glRenderbufferStorage(GL_RENDERBUFFER, GL_RGB8, width, height);
 			
+			local_buf = new unsigned char[width * height * 3];
+
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
 		}
 
@@ -27,12 +29,19 @@ namespace graphics
 		{
 			glDeleteFramebuffers(1, &fbo);
 			glDeleteRenderbuffers(1, &rbo);
+
+			delete[] local_buf;
 		}
 
+		auto read_pixels() -> void
+		{
+			glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, local_buf);
+		}
 	private:
 		unsigned fbo;
 		unsigned rbo;
 		const size_t width, height;
+		unsigned char *local_buf;
 	};
 }
 

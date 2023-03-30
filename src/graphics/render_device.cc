@@ -1,4 +1,5 @@
 #include "render_device.hpp"
+#include <string.h>
 
 namespace graphics
 {
@@ -69,7 +70,7 @@ auto RenderDevice::use_shader(const ShaderProgram &shader) -> void
 	texids.fill(-1);
 }
 
-auto RenderDevice::set_target(const RenderTarget &target) -> void
+auto RenderDevice::set_target(RenderTarget &target) -> void
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, target.fbo);
 	glViewport(0, 0, target.width, target.height);
@@ -111,7 +112,16 @@ auto RenderDevice::load_texture(const std::string &name, const video::Frame &fra
 
 auto RenderDevice::read_frame(const video::Frame &frame) -> void
 {
-	glReadPixels(0, 0, frame.width(), frame.height(), GL_RGB, GL_UNSIGNED_BYTE, frame);
+	current_target->read_pixels();
+	unsigned char *src = current_target->local_buf;
+	unsigned char *dst = static_cast<unsigned char*>(frame);
+
+	size_t h = frame.height();
+	size_t linesz = frame.width() * 3;
+
+	for (size_t y = 0; y < h; y++) {
+		memcpy(dst + y * linesz, src + (h - y - 1) * linesz, linesz);
+	}
 }
 
 auto RenderDevice::clear() -> void
